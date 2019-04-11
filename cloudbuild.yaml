@@ -3,3 +3,4 @@ steps:
   args: ['build', '--tag=gcr.io/$PROJECT_ID/helm', '--build-arg', 'HELM_VERSION=v2.12.2', '.']
 
 images: ['gcr.io/$PROJECT_ID/helm']
+
