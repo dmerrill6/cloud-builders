@@ -1,20 +1,12 @@
-FROM gcr.io/cloud-builders/gcloud
+FROM ubuntu:bionic
 
-ARG HELM_VERSION=v2.14.0
+ARG version=1.24.0
 
-COPY helm.bash /builder/helm.bash
+# https://docs.docker.com/compose/install/
+RUN \
+   apt -y update && \
+   apt -y install ca-certificates curl docker.io && \
+   curl -L "https://github.com/docker/compose/releases/download/$version/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
+   chmod +x /usr/local/bin/docker-compose
 
-RUN chmod +x /builder/helm.bash && \
-  mkdir -p /builder/helm && \
-  apt-get update && \
-  apt-get install -y curl && \
-  curl -SL https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz -o helm.tar.gz && \
-  tar zxvf helm.tar.gz --strip-components=1 -C /builder/helm linux-amd64/helm linux-amd64/tiller && \
-  rm helm.tar.gz && \
-  apt-get --purge -y autoremove && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
-
-ENV PATH=/builder/helm/:$PATH
-
-ENTRYPOINT ["/builder/helm.bash"]
+ENTRYPOINT ["/usr/local/bin/docker-compose"]
